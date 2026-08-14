@@ -28,11 +28,24 @@ CutieWindow {
             id: miniControls
 
             height: 70
+            radius: 22
 	        color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             clip: true
+
+            layer.enabled: true
+            layer.effect: OpacityMask {
+                maskSource: miniControlsMask
+            }
+
+            Rectangle {
+                id: miniControlsMask
+                anchors.fill: parent
+                radius: miniControls.radius
+                visible: false
+            }
 
             FastBlur {
                 anchors.left: parent.left
@@ -51,7 +64,9 @@ CutieWindow {
                 anchors.leftMargin: 10
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectFit
-                source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+                source: cutieMusic.trackList[playlistView.currentIndex].hasCover
+                    ? cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+                    : "qrc:/cutie-music.svg"
             }
 
             CutieLabel {
@@ -62,7 +77,8 @@ CutieWindow {
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
                 text: cutieMusic.trackList[playlistView.currentIndex].title
-                font.pixelSize: 20
+                font.pixelSize: 16
+                wrapMode: Text.NoWrap
                 elide: Text.ElideRight
             }
 
@@ -75,7 +91,8 @@ CutieWindow {
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
                 text: cutieMusic.trackList[playlistView.currentIndex].artist
-                font.pixelSize: 13
+                font.pixelSize: 12
+                wrapMode: Text.NoWrap
                 elide: Text.ElideRight
             }
 
@@ -175,7 +192,9 @@ CutieWindow {
 
             CutieListItem {
                 highlighted: playlistView.currentIndex == index
-                icon.source: modelData.path.toString().replace("file:///", "image://cover/")
+                icon.source: modelData.hasCover
+                    ? modelData.path.toString().replace("file:///", "image://cover/")
+                    : "qrc:/cutie-music.svg"
                 icon.width: 40
                 icon.height: 40
                 iconOverlay: false
