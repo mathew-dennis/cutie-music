@@ -184,12 +184,13 @@ CutieWindow {
             CutieListItem {
                 highlighted: playlistView.currentIndex == index
                 
-                icon.source: (modelData.path && modelData.path.toString().length > 0)
-                            ? modelData.path.toString().replace("file:///", "image://cover/")
-                            : "qrc:/cutie-music.svg"
+                icon.source: (modelData?.path && modelData.path.toString().length > 0)
+                                    ? modelData.path.toString().replace("file://", "image://cover")
+                                    : "qrc:/cutie-music.svg"
                 icon.width: 40
                 icon.height: 40
                 iconOverlay: false
+                wrapText: false
                 text: modelData.title
                 subText: modelData.artist
                 onClicked: {
