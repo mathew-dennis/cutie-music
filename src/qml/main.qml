@@ -79,7 +79,6 @@ CutieWindow {
                 text: cutieMusic.trackList[playlistView.currentIndex].title
                 font.pixelSize: 16
                 wrapMode: Text.NoWrap
-                elide: Text.ElideRight
             }
 
 
@@ -93,7 +92,6 @@ CutieWindow {
                 text: cutieMusic.trackList[playlistView.currentIndex].artist
                 font.pixelSize: 12
                 wrapMode: Text.NoWrap
-                elide: Text.ElideRight
             }
 
             Item {
@@ -198,6 +196,7 @@ CutieWindow {
                 icon.width: 40
                 icon.height: 40
                 iconOverlay: false
+                wrapText: false
                 text: modelData.title
                 subText: modelData.artist
                 onClicked: {
