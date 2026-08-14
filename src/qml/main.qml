@@ -29,23 +29,11 @@ CutieWindow {
 
             height: 70
             radius: 22
-	        color: Atmosphere.primaryAlphaColor
+            color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             clip: true
-
-            layer.enabled: true
-            layer.effect: OpacityMask {
-                maskSource: miniControlsMask
-            }
-
-            Rectangle {
-                id: miniControlsMask
-                anchors.fill: parent
-                radius: miniControls.radius
-                visible: false
-            }
 
             FastBlur {
                 anchors.left: parent.left
@@ -64,9 +52,14 @@ CutieWindow {
                 anchors.leftMargin: 10
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectFit
-                source: cutieMusic.trackList[playlistView.currentIndex].hasCover
-                    ? cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
-                    : "qrc:/cutie-music.svg"
+                readonly property var currentPath: cutieMusic.trackList?.[playlistView.currentIndex]?.path
+
+                source: (currentPath && currentPath.length > 0) 
+                        ? currentPath.toString().replace("file:///", "image://cover/") 
+                        : "qrc:/cutie-music.svg"
+
+                // Fallback if image provider fails to extract cover art
+                onStatusChanged: if (status === Image.Error) source = "qrc:/cutie-music.svg"
             }
 
             CutieLabel {
@@ -154,7 +147,7 @@ CutieWindow {
                     miniPlay.icon.name = "media-playback-start-symbolic";
                 }
             }
-            
+
             onErrorOccurred: (error, errorString) => {
                 console.error(errorString);
             }
@@ -190,13 +183,13 @@ CutieWindow {
 
             CutieListItem {
                 highlighted: playlistView.currentIndex == index
-                icon.source: modelData.hasCover
-                    ? modelData.path.toString().replace("file:///", "image://cover/")
-                    : "qrc:/cutie-music.svg"
+                
+                icon.source: (modelData.path && modelData.path.toString().length > 0)
+                            ? modelData.path.toString().replace("file:///", "image://cover/")
+                            : "qrc:/cutie-music.svg"
                 icon.width: 40
                 icon.height: 40
                 iconOverlay: false
-                wrapText: false
                 text: modelData.title
                 subText: modelData.artist
                 onClicked: {

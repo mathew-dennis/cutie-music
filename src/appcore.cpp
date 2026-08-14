@@ -1,85 +1,75 @@
 #include "appcore.h"
 #include <QDebug>
-#include <attachedpictureframe.h>
-#include <id3v2frame.h>
-#include <id3v2tag.h>
-#include <mpegfile.h>
-#include <vorbisfile.h>
-#include <xiphcomment.h>
-
-namespace {
-
-// Mirrors the formats CoverImageProvider knows how to pull art from, so
-// "hasCover" only ever promises what image://cover/ can actually deliver.
-bool hasEmbeddedCoverArt(const QFileInfo &entry)
-{
-	const QString filePath = entry.absoluteFilePath();
-	const QString suffix = entry.suffix().toUpper();
-
-	if (suffix == QStringLiteral("MP3")) {
-		TagLib::MPEG::File audioFile(filePath.toUtf8().constData());
-		TagLib::ID3v2::Tag *tag = audioFile.ID3v2Tag();
-		return tag && !tag->frameList("APIC").isEmpty();
-	} else if (suffix == QStringLiteral("OGG")) {
-		TagLib::Ogg::Vorbis::File audioFile(
-			filePath.toUtf8().constData());
-		TagLib::Ogg::XiphComment *tag = audioFile.tag();
-		return tag && !tag->pictureList().isEmpty();
-	}
-
-	return false;
-}
-
-} // namespace
+#include <QDirIterator>
+#include <QSet>
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
 
 AppCore::AppCore(QObject *parent)
-	: QObject(parent)
+    : QObject(parent)
 {
-	readTrackList(QStandardPaths::writableLocation(
-		QStandardPaths::MusicLocation));
+    readTrackList(QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
 }
 
 void AppCore::readTrackList(QDir dir)
 {
-	QFileInfoList dirlist = dir.entryInfoList();
+    // 1. Only target valid audio extensions
+    static const QStringList audioFilters = {
+        "*.mp3", "*.flac", "*.m4a", "*.ogg", "*.wav", "*.opus", "*.aac", "*.wma"
+    };
 
-	for (int i = 0; i < dirlist.size(); i++) {
-		QFileInfo entry = dirlist.at(i);
-		QString filePath = entry.absoluteFilePath();
-		QUrl fileUrl = QUrl::fromLocalFile(filePath);
-		if (entry.isDir()) {
-			if (entry.fileName() != ".." && entry.fileName() != ".")
-				readTrackList(QDir(filePath));
-		} else if (entry.isFile() && !m_trackList.contains(fileUrl)) {
-			QVariantMap musicFile;
-			TagLib::FileRef tagF(filePath.toUtf8().constData());
+    // 2. Build a set of existing URLs to accurately check for duplicates
+    QSet<QUrl> existingUrls;
+    for (const QVariant &item : std::as_const(m_trackList)) {
+        existingUrls.insert(item.toMap().value("path").toUrl());
+    }
 
-			QString title;
-			QString artist;
-			if (!tagF.isNull() && tagF.tag()) {
-				title = QString::fromUtf8(
-					tagF.tag()->title().toCString());
-				artist = QString::fromUtf8(
-					tagF.tag()->artist().toCString());
-			}
-			if (title.trimmed().isEmpty())
-				title = entry.completeBaseName();
-			if (artist.trimmed().isEmpty())
-				artist = tr("Unknown Artist");
+    // 3. Use QDirIterator for recursive directory scanning
+    QDirIterator it(dir.absolutePath(), audioFilters, QDir::Files, QDirIterator::Subdirectories);
 
-			musicFile.insert("path", QVariant(fileUrl));
-			musicFile.insert("title", QVariant(title));
-			musicFile.insert("artist", QVariant(artist));
-			musicFile.insert(
-				"hasCover",
-				QVariant(hasEmbeddedCoverArt(entry)));
-			m_trackList.append(QVariant(musicFile));
-			emit trackListChanged(m_trackList);
-		}
-	}
+    bool itemsAdded = false;
+
+    while (it.hasNext()) {
+        it.next();
+        QFileInfo entry = it.fileInfo();
+        QUrl fileUrl = QUrl::fromLocalFile(entry.absoluteFilePath());
+
+        if (existingUrls.contains(fileUrl))
+            continue;
+
+        TagLib::FileRef tagF(entry.absoluteFilePath().toUtf8().constData());
+
+        QString title;
+        QString artist;
+
+        if (!tagF.isNull() && tagF.tag()) {
+            // toCString(true) guarantees UTF-8 string conversion
+            title = QString::fromUtf8(tagF.tag()->title().toCString(true));
+            artist = QString::fromUtf8(tagF.tag()->artist().toCString(true));
+        }
+
+        if (title.trimmed().isEmpty())
+            title = entry.completeBaseName();
+        if (artist.trimmed().isEmpty())
+            artist = tr("Unknown Artist");
+
+        QVariantMap musicFile;
+        musicFile.insert("path", fileUrl);
+        musicFile.insert("title", title);
+        musicFile.insert("artist", artist);
+
+        m_trackList.append(musicFile);
+        existingUrls.insert(fileUrl);
+        itemsAdded = true;
+    }
+
+    // 4. Emit signal ONCE after the entire scan finishes
+    if (itemsAdded) {
+        emit trackListChanged(m_trackList);
+    }
 }
 
 QVariantList AppCore::trackList()
 {
-	return m_trackList;
+    return m_trackList;
 }
