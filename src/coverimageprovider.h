@@ -8,6 +8,7 @@
 #include <mpegfile.h>
 #include <QQuickImageProvider>
 #include <QImage>
+#include <QImageReader>
 
 class CoverImageProvider : public QQuickImageProvider {
     public:
