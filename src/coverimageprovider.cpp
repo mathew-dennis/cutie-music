@@ -8,8 +8,6 @@ CoverImageProvider::CoverImageProvider()
 QImage CoverImageProvider::requestImage(const QString &id, QSize *size,
 					const QSize &requestedSize)
 {
-	Q_UNUSED(size);
-	Q_UNUSED(requestedSize);
 	TagLib::FileRef file(id.toUtf8().constData());
 
 	QString fileType = id.right(3).toUpper();
@@ -39,8 +37,16 @@ QImage CoverImageProvider::requestImage(const QString &id, QSize *size,
 		}
 	}
 
-	if (image.isNull())
-		image = QImage(":/cutie-music.svg");
+	if (image.isNull()) {
+		QImageReader reader(":/cutie-music.svg");
+		reader.setScaledSize(requestedSize.isValid()
+					      ? requestedSize
+					      : QSize(512, 512));
+		image = reader.read();
+	}
+
+	if (size)
+		*size = image.size();
 
 	return image;
 }
