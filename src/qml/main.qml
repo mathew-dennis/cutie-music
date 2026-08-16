@@ -29,7 +29,7 @@ CutieWindow {
 
             height: 70
             radius: 22
-            color: Atmosphere.primaryAlphaColor
+	        color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -52,14 +52,7 @@ CutieWindow {
                 anchors.leftMargin: 10
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectFit
-                readonly property var currentPath: cutieMusic.trackList?.[playlistView.currentIndex]?.path
-
-                source: (currentPath && currentPath.length > 0) 
-                        ? currentPath.toString().replace("file:///", "image://cover/") 
-                        : "qrc:/cutie-music.svg"
-
-                // Fallback if image provider fails to extract cover art
-                onStatusChanged: if (status === Image.Error) source = "qrc:/cutie-music.svg"
+                source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
             }
 
             CutieLabel {
@@ -147,7 +140,7 @@ CutieWindow {
                     miniPlay.icon.name = "media-playback-start-symbolic";
                 }
             }
-
+            
             onErrorOccurred: (error, errorString) => {
                 console.error(errorString);
             }

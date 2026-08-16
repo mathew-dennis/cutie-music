@@ -17,9 +17,7 @@ CutiePage {
         width: 234
         height: 236
         anchors.top: parent.top
-        source: cutieMusic.trackList[playlistView.currentIndex].hasCover
-            ? cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
-            : "qrc:/cutie-music.svg"
+        source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 58
         sourceSize.height: 800
