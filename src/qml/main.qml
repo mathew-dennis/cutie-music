@@ -183,7 +183,10 @@ CutieWindow {
                 icon.width: 40
                 icon.height: 40
                 iconOverlay: false
-                wrapText: false
+                wrapMode: Text.NoWrap
+                elide: Text.ElideRight
+                maximumLineCount: 1
+                
                 text: modelData.title
                 subText: modelData.artist
                 onClicked: {
