@@ -28,7 +28,6 @@ CutieWindow {
             id: miniControls
 
             height: 70
-            radius: 22
 	        color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
@@ -63,8 +62,8 @@ CutieWindow {
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
                 text: cutieMusic.trackList[playlistView.currentIndex].title
-                font.pixelSize: 16
-                wrapMode: Text.NoWrap
+                font.pixelSize: 20
+                elide: Text.ElideRight
             }
 
 
@@ -76,8 +75,8 @@ CutieWindow {
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
                 text: cutieMusic.trackList[playlistView.currentIndex].artist
-                font.pixelSize: 12
-                wrapMode: Text.NoWrap
+                font.pixelSize: 13
+                elide: Text.ElideRight
             }
 
             Item {
@@ -176,17 +175,14 @@ CutieWindow {
 
             CutieListItem {
                 highlighted: playlistView.currentIndex == index
-                
-                icon.source: (modelData?.path && modelData.path.toString().length > 0)
-                                    ? modelData.path.toString().replace("file://", "image://cover")
-                                    : "qrc:/cutie-music.svg"
+                icon.source: modelData.path.toString().replace("file:///", "image://cover/")
                 icon.width: 40
                 icon.height: 40
                 iconOverlay: false
+
                 wrapMode: Text.NoWrap
                 elide: Text.ElideRight
                 maximumLineCount: 1
-                
                 text: modelData.title
                 subText: modelData.artist
                 onClicked: {
