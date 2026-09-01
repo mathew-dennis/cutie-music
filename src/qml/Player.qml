@@ -136,11 +136,11 @@ CutiePage {
             height: 66
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-
-            icon.color: Atmosphere.backgroundColor
+            icon: miniPlay.icon
 
             background: Rectangle {
-                color: Atmosphere.textColor
+                color: "transparent"
+                border.color: Atmosphere.textColor
                 radius: width / 2
             }
 
