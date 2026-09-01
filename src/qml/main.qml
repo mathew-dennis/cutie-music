@@ -28,119 +28,92 @@ CutieWindow {
         Rectangle {
             id: miniControls
 
-            height: 72
-            color: Atmosphere.primaryAlphaColor
-            radius: 20
-            clip: true
-
+            height: 70
+	        color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            anchors.bottomMargin: 12
+            clip: true
 
             FastBlur {
-                anchors.fill: parent
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: view.height
                 source: playlistView
                 radius: 70
             }
 
-            MouseArea {
-                anchors.left: parent.left
-                anchors.right: buttonRow.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                onReleased: {
-                    view.pageStack.push("qrc:/Player.qml", {});
-                }
-            }
-
-            Rectangle {
-                id: coverContainer
-                width: 52
-                height: 52
-                radius: 12
-                clip: true
-                anchors.left: parent.left
+            Image {
+                id: miniCover
+                y: 10
+                width: 50
+                height: 50
                 anchors.leftMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-                color: "transparent"
+                anchors.left: parent.left
+                fillMode: Image.PreserveAspectFit
+                source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+            }
 
-                Image {
-                    id: miniCover
+            CutieLabel {
+                anchors.top: parent.top
+                anchors.topMargin: 10
+                anchors.leftMargin: 10
+                anchors.left: miniCover.right
+                anchors.rightMargin: 10
+                anchors.right: miniPlay.left
+                text: cutieMusic.trackList[playlistView.currentIndex].title
+                font.pixelSize: 20
+                elide: Text.ElideRight
+            }
+
+
+            CutieLabel {
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 10
+                anchors.leftMargin: 10
+                anchors.left: miniCover.right
+                anchors.rightMargin: 10
+                anchors.right: miniPlay.left
+                text: cutieMusic.trackList[playlistView.currentIndex].artist
+                font.pixelSize: 13
+                elide: Text.ElideRight
+            }
+
+            Item {
+                x: 0
+                y: 0
+                height: parent.height
+                width: parent.width
+                z: 100
+
+                MouseArea {
                     anchors.fill: parent
-                    fillMode: Image.PreserveAspectCrop
-                    source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
-                }
-            }
-
-            Column {
-                anchors.left: coverContainer.right
-                anchors.leftMargin: 12
-                anchors.right: buttonRow.left
-                anchors.rightMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 3
-
-                CutieLabel {
-                    width: parent.width
-                    text: cutieMusic.trackList[playlistView.currentIndex].title
-                    font.pixelSize: 15
-                    font.weight: Font.DemiBold
-                    elide: Text.ElideRight
-                }
-
-                CutieLabel {
-                    width: parent.width
-                    text: cutieMusic.trackList[playlistView.currentIndex].artist
-                    font.pixelSize: 13
-                    opacity: 0.65
-                    elide: Text.ElideRight
-                }
-            }
-
-            Row {
-                id: buttonRow
-                anchors.right: parent.right
-                anchors.rightMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 4
-
-                CutieButton {
-                    id: miniPlay
-                    width: 44
-                    height: 44
-                    icon.name: mediaPlayer.playbackState === MediaPlayer.PlayingState ? "media-playback-pause-symbolic" : "media-playback-start-symbolic"
-                    icon.color: Atmosphere.textColor
-
-                    onClicked: {
-                        if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
-                            mediaPlayer.pause();
-                        } else {
-                            if (mediaPlayer.playbackState === MediaPlayer.StoppedState) {
-                                mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
-                            } else {
-                                mediaPlayer.play();
-                            }
-                        }
+                    onReleased: {
+                        view.pageStack.push("qrc:/Player.qml", {});
                     }
                 }
 
-                CutieButton {
-                    id: miniNext
-                    width: 44
-                    height: 44
-                    icon.name: "media-skip-forward-symbolic"
-                    icon.color: Atmosphere.textColor
+            }
 
-                    onClicked: {
-                        if (playlistView.currentIndex + 1 < cutieMusic.trackList.length) {
-                            playlistView.currentIndex++;
-                        } else {
-                            playlistView.currentIndex = 0;
-                        }
-                        mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+            CutieButton {
+                id: miniPlay
+                y: 10
+                width: 55
+                height: 50
+                anchors.rightMargin: 10
+                anchors.right: parent.right
+                icon.name: "media-playback-start-symbolic"
+                icon.color: Atmosphere.textColor
+                z: 200
+
+                onClicked: {
+                    if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
+                        mediaPlayer.pause();
+                    } else {
+                        if (mediaPlayer.playbackState === MediaPlayer.StoppedState) {
+                            mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                        } else mediaPlayer.play();
                     }
                 }
             }
@@ -193,7 +166,7 @@ CutieWindow {
                 }
 
                 footer: Item {
-                    height: miniControls.height + 12
+                    height: miniControls.height
                 }
             }
         }
