@@ -10,15 +10,6 @@ CutiePage {
     width: view.width
     height: view.height
 
-    // Helper function to format milliseconds to mm:ss
-    function formatTime(ms) {
-        if (isNaN(ms) || ms < 0) return "0:00";
-        var totalSeconds = Math.floor(ms / 1000);
-        var minutes = Math.floor(totalSeconds / 60);
-        var seconds = totalSeconds % 60;
-        return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
-
     Image {
         id: image
 
@@ -63,68 +54,23 @@ CutiePage {
         elide: Text.ElideRight
     }
 
-    CutieSlider {
-        id: slideritem
-
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: controls.top
-        anchors.bottomMargin: 30
-        from: 0
-        to: mediaPlayer.duration
-
-        value: mediaPlayer.position
-        onMoved: {
-            if (mediaPlayer.seekable)
-                mediaPlayer.position = value;
-        }
-    }
-
-    // Current Time Label
-    CutieLabel {
-        anchors.top: slideritem.bottom
-        anchors.left: slideritem.left
-        anchors.leftMargin: 15
-        text: formatTime(mediaPlayer.position)
-        font.pixelSize: 12
-        opacity: 0.8
-    }
-
-    // Total Time Label
-    CutieLabel {
-        anchors.top: slideritem.bottom
-        anchors.right: slideritem.right
-        anchors.rightMargin: 15
-        text: formatTime(mediaPlayer.duration)
-        font.pixelSize: 12
-        opacity: 0.8
-    }
-
     Item {
         id: controls
 
-        height: 66
-        width: 250
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        height: 60
+        width: 138
+        anchors.bottom: slideritem.top
+        anchors.bottomMargin: 25
         anchors.horizontalCenter: parent.horizontalCenter
 
         CutieButton {
             id: previous
-            width: 60
+            width: 66
             height: 60
-            anchors.verticalCenter: parent.verticalCenter
             anchors.rightMargin: 20
             anchors.right: implay.left
             icon.name: "media-skip-backward-symbolic"
             icon.color: Atmosphere.textColor
-
-            background: Rectangle {
-                color: "transparent"
-                border.color: Atmosphere.textColor
-                border.width: 1
-                radius: width / 2
-            }
 
             onClicked: {
                 if (playlistView.currentIndex > 0)
@@ -137,16 +83,9 @@ CutiePage {
         CutieButton {
             id: implay
             width: 66
-            height: 66
+            height: 60
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
             icon: miniPlay.icon
-            icon.color: Atmosphere.backgroundColor // Opposite to standard text
-
-            background: Rectangle {
-                color: Atmosphere.textColor // Opposite fill
-                radius: width / 2
-            }
 
             onClicked: {
                 if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
@@ -161,20 +100,12 @@ CutiePage {
 
         CutieButton {
             id: next
-            width: 60
+            width: 66
             height: 60
-            anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 20
             anchors.left: implay.right
             icon.name: "media-skip-forward-symbolic"
             icon.color: Atmosphere.textColor
-
-            background: Rectangle {
-                color: "transparent"
-                border.color: Atmosphere.textColor
-                border.width: 1
-                radius: width / 2
-            }
 
             onClicked: {
                 if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
@@ -182,6 +113,23 @@ CutiePage {
                 else playlistView.currentIndex = 0;
                 mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
             }
+        }
+    }
+
+    CutieSlider {
+        id: slideritem
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 75
+        from: 0
+        to: mediaPlayer.duration
+
+        value: mediaPlayer.position
+        onMoved: {
+            if (mediaPlayer.seekable)
+                mediaPlayer.position = value;
         }
     }
 }
