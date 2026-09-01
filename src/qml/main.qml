@@ -7,6 +7,7 @@ import QtQuick.Dialogs
 import QtQuick.Window
 
 // Authors: Alexey T. (vin4ter), Erik Inkinen
+// Contributors: Mathew Dennis
 CutieWindow {
     id: view
     property bool playedStatus: false
@@ -183,7 +184,7 @@ CutieWindow {
                 wrapMode: Text.NoWrap
                 elide: Text.ElideRight
                 maximumLineCount: 1
-                
+
                 text: modelData.title
                 subText: modelData.artist
                 onClicked: {
