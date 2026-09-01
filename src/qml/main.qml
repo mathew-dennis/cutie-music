@@ -37,14 +37,7 @@ CutieWindow {
             anchors.margins: 10
             clip: true
 
-            FastBlur {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                height: view.height
-                source: playlistView
-                radius: 70
-            }
+
 
             Image {
                 id: miniCover
