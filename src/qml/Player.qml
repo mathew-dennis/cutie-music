@@ -114,13 +114,7 @@ CutiePage {
             anchors.right: implay.left
             icon.name: "media-skip-backward-symbolic"
             icon.color: Atmosphere.textColor
-
-            background: Rectangle {
-                color: "transparent"
-                border.color: Atmosphere.textColor
-                border.width: 1
-                radius: width / 2
-            }
+            color: "transparent"
 
             onClicked: {
                 if (playlistView.currentIndex > 0)
@@ -164,13 +158,7 @@ CutiePage {
             anchors.left: implay.right
             icon.name: "media-skip-forward-symbolic"
             icon.color: Atmosphere.textColor
-
-            background: Rectangle {
-                color: "transparent"
-                border.color: Atmosphere.textColor
-                border.width: 1
-                radius: width / 2
-            }
+            color: "transparent"
 
             onClicked: {
                 if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
