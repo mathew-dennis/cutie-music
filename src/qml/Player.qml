@@ -7,8 +7,8 @@ import QtMultimedia
 CutiePage {
     id: player
 
-    anchors.fill: parent
-
+    width: view.width
+    height: view.height
     function formatTime(ms) {
         if (isNaN(ms) || ms < 0) return "0:00";
         var totalSeconds = Math.floor(ms / 1000);
@@ -136,7 +136,7 @@ CutiePage {
             height: 66
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            icon.name: mediaPlayer.playbackState === MediaPlayer.PlayingState ? "media-playback-pause-symbolic" : "media-playback-start-symbolic"
+            icon: miniPlay.icon
             icon.color: Atmosphere.backgroundColor
 
             background: Rectangle {
