@@ -29,17 +29,16 @@ CutieWindow {
             id: miniControls
 
             height: 70
-	        color: Atmosphere.primaryAlphaColor
+            radius: 20
+            color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.margins: 10
             clip: true
 
             FastBlur {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                height: view.height
+                anchors.fill: parent
                 source: playlistView
                 radius: 70
             }
@@ -51,27 +50,36 @@ CutieWindow {
                 height: 50
                 anchors.leftMargin: 10
                 anchors.left: parent.left
-                fillMode: Image.PreserveAspectFit
+                fillMode: Image.PreserveAspectCrop
                 source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+                
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: Rectangle {
+                        width: miniCover.width
+                        height: miniCover.height
+                        radius: 8
+                    }
+                }
             }
 
             CutieLabel {
                 anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.leftMargin: 10
+                anchors.topMargin: 14
+                anchors.leftMargin: 15
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
                 text: cutieMusic.trackList[playlistView.currentIndex].title
-                font.pixelSize: 20
+                font.pixelSize: 16
+                font.weight: Font.Bold
                 elide: Text.ElideRight
             }
 
-
             CutieLabel {
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 10
-                anchors.leftMargin: 10
+                anchors.bottomMargin: 14
+                anchors.leftMargin: 15
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
@@ -99,12 +107,13 @@ CutieWindow {
             CutieButton {
                 id: miniPlay
                 y: 10
-                width: 55
+                width: 45
                 height: 50
-                anchors.rightMargin: 10
-                anchors.right: parent.right
-                icon.name: "media-playback-start-symbolic"
+                anchors.rightMargin: 5
+                anchors.right: miniNext.left
+                icon.name: mediaPlayer.playbackState === MediaPlayer.PlayingState ? "media-playback-pause-symbolic" : "media-playback-start-symbolic"
                 icon.color: Atmosphere.textColor
+                color: "transparent"
                 z: 200
 
                 onClicked: {
@@ -115,6 +124,26 @@ CutieWindow {
                             mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
                         } else mediaPlayer.play();
                     }
+                }
+            }
+            
+            CutieButton {
+                id: miniNext
+                y: 10
+                width: 45
+                height: 50
+                anchors.rightMargin: 10
+                anchors.right: parent.right
+                icon.name: "media-skip-forward-symbolic"
+                icon.color: Atmosphere.textColor
+                color: "transparent"
+                z: 200
+
+                onClicked: {
+                    if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
+                        playlistView.currentIndex++;
+                    else playlistView.currentIndex = 0;
+                    mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
                 }
             }
         }
