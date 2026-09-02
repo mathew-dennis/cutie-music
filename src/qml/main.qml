@@ -44,6 +44,7 @@ CutieWindow {
                 height: view.height
                 source: playlistView
                 radius: 70
+                clip: true
             }
 
             Image {
