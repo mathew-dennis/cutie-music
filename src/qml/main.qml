@@ -36,15 +36,21 @@ CutieWindow {
             anchors.bottom: parent.bottom
             anchors.margins: 10
             clip: true
+            z: 10
+
+            layer.enabled: true
+            layer.effect: OpacityMask {
+                maskSource: Rectangle {
+                    width: miniControls.width
+                    height: miniControls.height
+                    radius: miniControls.radius
+                }
+            }
 
             FastBlur {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                height: view.height
+                anchors.fill: parent
                 source: playlistView
                 radius: 70
-                clip: true
             }
 
             Image {
@@ -108,7 +114,7 @@ CutieWindow {
                 anchors.rightMargin: 5
                 anchors.right: miniNext.left
                 icon.name: "media-playback-start-symbolic"
-                 icon.color: Atmosphere.textColor
+                icon.color: Atmosphere.textColor
                 color: "transparent"
                 z: 200
 
