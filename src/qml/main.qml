@@ -185,10 +185,41 @@ CutieWindow {
             anchors.bottom: miniControls.top
             anchors.top: parent.top
             clip: true
+
+            Column {
+                id: topSection
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                spacing: 10
+                z: 2
+
+                CutiePageHeader {
+                    id: titleM
+                    title: qsTr("Music")
+                    width: parent.width
+                }
+
+                CutieTextField {
+                    placeholderText: qsTr("Search...")
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: 15
+                    anchors.rightMargin: 15
+                    
+                    onAccepted: view.searchQuery = text
+                }
+            }
+
             CutieListView {
                 id: playlistView
-                anchors.fill: parent
+                anchors.top: topSection.bottom
+                anchors.topMargin: 10
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
                 anchors.bottomMargin: -miniControls.height
+
                 model: cutieMusic.trackList.filter(function(item) {
                     if (!view.searchQuery) return true;
                     var q = view.searchQuery.toLowerCase();
@@ -197,26 +228,6 @@ CutieWindow {
                 })
                 delegate: playlistDelegate
                 clip: true
-
-                header: Column {
-                    width: playlistView.width
-                    spacing: 10
-
-                    CutiePageHeader {
-                        id: titleM
-                        title: qsTr("Music")
-                        width: parent.width
-                    }
-
-                    CutieTextField {
-                        placeholderText: qsTr("Search...")
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.leftMargin: 15
-                        anchors.rightMargin: 15
-                        onAccepted: view.searchQuery = text
-                    }
-                }
 
                 footer: Item {
                     height: miniControls.height
