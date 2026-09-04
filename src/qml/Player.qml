@@ -131,6 +131,8 @@ CutiePage {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             icon: miniPlay.icon
+            icon.width: 40
+            icon.height: 40
 
 
             background: Rectangle {
