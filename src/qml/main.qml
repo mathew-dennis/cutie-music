@@ -103,7 +103,6 @@ CutieWindow {
                         view.pageStack.push("qrc:/Player.qml", {});
                     }
                 }
-
             }
 
             CutieButton {
@@ -186,38 +185,9 @@ CutieWindow {
             anchors.top: parent.top
             clip: true
 
-            Column {
-                id: topSection
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: 10
-                z: 2
-
-                CutiePageHeader {
-                    id: titleM
-                    title: qsTr("Music")
-                    width: parent.width
-                }
-
-                CutieTextField {
-                    placeholderText: qsTr("Search...")
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.leftMargin: 15
-                    anchors.rightMargin: 15
-                    
-                    onAccepted: view.searchQuery = text
-                }
-            }
-
             CutieListView {
                 id: playlistView
-                anchors.top: topSection.bottom
-                anchors.topMargin: 10
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
+                anchors.fill: parent
                 anchors.bottomMargin: -miniControls.height
 
                 model: cutieMusic.trackList.filter(function(item) {
@@ -228,6 +198,25 @@ CutieWindow {
                 })
                 delegate: playlistDelegate
                 clip: true
+
+                header: Column {
+                    width: playlistView.width
+                    spacing: 10
+
+                    CutiePageHeader {
+                        id: titleM
+                        title: qsTr("Music")
+                        width: parent.width
+                    }
+
+                    CutieTextField {
+                        placeholderText: qsTr("Search...")
+                        width: parent.width - 30
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        onAccepted: view.searchQuery = text
+                    }
+                }
 
                 footer: Item {
                     height: miniControls.height
