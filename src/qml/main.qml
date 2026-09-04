@@ -214,7 +214,7 @@ CutieWindow {
                         anchors.right: parent.right
                         anchors.leftMargin: 15
                         anchors.rightMargin: 15
-                        onTextChanged: view.searchQuery = text
+                        onAccepted: view.searchQuery = text
                     }
                 }
 
