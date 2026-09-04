@@ -192,12 +192,13 @@ CutieWindow {
                 clip: true
 
                 header: Column {
-                    width: parent.width
+                    width: playlistView.width
 
                     CutiePageHeader {
                         id: titleM
                         title: qsTr("Music")
                     }
+                    
                     CutieTextField {
                         placeholderText: qsTr("Search...")
                         width: parent.width - 30
