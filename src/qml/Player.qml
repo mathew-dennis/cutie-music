@@ -99,7 +99,7 @@ CutiePage {
     Item {
         id: controls
 
-        height: 66
+        height: 90
         width: 250
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
@@ -126,8 +126,8 @@ CutiePage {
 
         CutieButton {
             id: implay
-            width: 66
-            height: 66
+            width: 88
+            height: 88
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             icon: miniPlay.icon
