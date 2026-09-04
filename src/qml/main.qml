@@ -191,11 +191,6 @@ CutieWindow {
                 delegate: playlistDelegate
                 clip: true
 
-                // Prevents ListView from scrolling down to track 0 on launch
-                currentIndex: 0
-                highlightFollowsCurrentItem: false
-
-
 
                 header: Column {
                     width: playlistView.width
