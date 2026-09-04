@@ -131,8 +131,7 @@ CutiePage {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             icon: miniPlay.icon
-            icon.width: 48
-            icon.height: 48
+
 
             background: Rectangle {
                 color: "transparent"
