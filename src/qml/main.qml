@@ -16,6 +16,12 @@ CutieWindow {
     property int toMove: 0
     property int colPlaylist: 0
     property string searchQuery: ""
+    property var filteredTracks: cutieMusic.trackList.filter(function(item) {
+        if (!view.searchQuery) return true;
+        var q = view.searchQuery.toLowerCase();
+        return item.title.toLowerCase().includes(q) ||
+               item.artist.toLowerCase().includes(q);
+    })
 
     width: 400
     height: 800
@@ -56,9 +62,7 @@ CutieWindow {
                 anchors.leftMargin: 10
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectCrop
-                source: (playlistView.model && playlistView.model[playlistView.currentIndex]) 
-                        ? playlistView.model[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/") 
-                        : ""
+                source: view.filteredTracks[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
             }
 
             CutieLabel {
@@ -68,9 +72,7 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: (playlistView.model && playlistView.model[playlistView.currentIndex]) 
-                      ? playlistView.model[playlistView.currentIndex].title 
-                      : ""
+                text: view.filteredTracks[playlistView.currentIndex].title
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 elide: Text.ElideRight
@@ -83,9 +85,7 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: (playlistView.model && playlistView.model[playlistView.currentIndex]) 
-                      ? playlistView.model[playlistView.currentIndex].artist 
-                      : ""
+                text: view.filteredTracks[playlistView.currentIndex].artist
                 font.pixelSize: 13
                 elide: Text.ElideRight
             }
@@ -121,8 +121,8 @@ CutieWindow {
                     if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
                         mediaPlayer.pause();
                     } else {
-                        if (mediaPlayer.playbackState === MediaPlayer.StoppedState && playlistView.model[playlistView.currentIndex]) {
-                            mediaPlayer.source = playlistView.model[playlistView.currentIndex].path;
+                        if (mediaPlayer.playbackState === MediaPlayer.StoppedState) {
+                            mediaPlayer.source = view.filteredTracks[playlistView.currentIndex].path;
                         } else mediaPlayer.play();
                     }
                 }
@@ -141,11 +141,10 @@ CutieWindow {
                 z: 200
 
                 onClicked: {
-                    if (playlistView.count === 0) return;
-                    if (playlistView.currentIndex + 1 < playlistView.count)
+                    if (playlistView.currentIndex + 1 < view.filteredTracks.length)
                         playlistView.currentIndex++;
                     else playlistView.currentIndex = 0;
-                    mediaPlayer.source = playlistView.model[playlistView.currentIndex].path;
+                    mediaPlayer.source = view.filteredTracks[playlistView.currentIndex].path;
                 }
             }
         }
@@ -157,11 +156,10 @@ CutieWindow {
 
             onMediaStatusChanged: {
                 if (mediaStatus == MediaPlayer.EndOfMedia) {
-                    if (playlistView.count === 0) return;
-                    if (playlistView.currentIndex + 1 < playlistView.count)
+                    if (playlistView.currentIndex + 1 < view.filteredTracks.length)
                         playlistView.currentIndex++;
                     else playlistView.currentIndex = 0;
-                    mediaPlayer.source = playlistView.model[playlistView.currentIndex].path;
+                    mediaPlayer.source = view.filteredTracks[playlistView.currentIndex].path;
                 } else if (mediaStatus == MediaPlayer.LoadedMedia) play();
             }
 
@@ -189,26 +187,17 @@ CutieWindow {
                 id: playlistView
                 anchors.fill: parent
                 anchors.bottomMargin: -miniControls.height
-
-                model: cutieMusic.trackList.filter(function(item) {
-                    if (!view.searchQuery) return true;
-                    var q = view.searchQuery.toLowerCase();
-                    return item.title.toLowerCase().includes(q) || 
-                           item.artist.toLowerCase().includes(q);
-                })
+                model: view.filteredTracks
                 delegate: playlistDelegate
                 clip: true
 
                 header: Column {
-                    width: playlistView.width
-                    spacing: 10
+                    width: parent.width
 
                     CutiePageHeader {
                         id: titleM
                         title: qsTr("Music")
-                        width: parent.width
                     }
-
                     CutieTextField {
                         placeholderText: qsTr("Search...")
                         width: parent.width - 30
@@ -217,7 +206,6 @@ CutieWindow {
                         onAccepted: view.searchQuery = text
                     }
                 }
-
                 footer: Item {
                     height: miniControls.height
                 }
