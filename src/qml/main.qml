@@ -195,9 +195,7 @@ CutieWindow {
                 currentIndex: 0
                 highlightFollowsCurrentItem: false
 
-                Component.onCompleted: {
-                    playlistView.positionViewAtBeginning()
-                }
+
 
                 header: Column {
                     width: playlistView.width
