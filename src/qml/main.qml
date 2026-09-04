@@ -183,7 +183,7 @@ CutieWindow {
             anchors.top: parent.top
             clip: true
 
-            CutieListView {
+           CutieListView {
                 id: playlistView
                 anchors.fill: parent
                 anchors.bottomMargin: -miniControls.height
@@ -191,22 +191,43 @@ CutieWindow {
                 delegate: playlistDelegate
                 clip: true
 
+                // Prevents ListView from scrolling down to track 0 on launch
+                currentIndex: 0
+                highlightFollowsCurrentItem: false
+
+                Component.onCompleted: {
+                    playlistView.positionViewAtBeginning()
+                }
+
                 header: Column {
                     width: playlistView.width
+                    spacing: 5
+                    bottomPadding: 15
 
                     CutiePageHeader {
                         id: titleM
                         title: qsTr("Music")
+                        width: parent.width // Fixes the invisible text
                     }
                     
-                    CutieTextField {
-                        placeholderText: qsTr("Search...")
-                        width: parent.width - 30
-                        anchors.horizontalCenter: parent.horizontalCenter
+                    // Item wrapper prevents anchor conflicts inside the Column
+                    Item {
+                        width: parent.width
+                        height: searchField.height
+                        
+                        CutieTextField {
+                            id: searchField
+                            placeholderText: qsTr("Search...")
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.leftMargin: 15
+                            anchors.rightMargin: 15
 
-                        onAccepted: view.searchQuery = text
+                            onAccepted: view.searchQuery = text
+                        }
                     }
                 }
+                
                 footer: Item {
                     height: miniControls.height
                 }
