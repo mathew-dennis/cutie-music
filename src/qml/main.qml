@@ -194,8 +194,6 @@ CutieWindow {
 
                 header: Column {
                     width: playlistView.width
-                    spacing: 5
-                    bottomPadding: 15
 
                     CutiePageHeader {
                         id: titleM
