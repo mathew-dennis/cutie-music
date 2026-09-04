@@ -15,6 +15,7 @@ CutieWindow {
     property bool btnPlayslate: false
     property int toMove: 0
     property int colPlaylist: 0
+    property string searchQuery: ""
 
     width: 400
     height: 800
@@ -55,7 +56,9 @@ CutieWindow {
                 anchors.leftMargin: 10
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectCrop
-                source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+                source: (playlistView.model && playlistView.model[playlistView.currentIndex]) 
+                        ? playlistView.model[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/") 
+                        : ""
             }
 
             CutieLabel {
@@ -65,12 +68,13 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: cutieMusic.trackList[playlistView.currentIndex].title
+                text: (playlistView.model && playlistView.model[playlistView.currentIndex]) 
+                      ? playlistView.model[playlistView.currentIndex].title 
+                      : ""
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 elide: Text.ElideRight
             }
-
 
             CutieLabel {
                 anchors.bottom: parent.bottom
@@ -79,7 +83,9 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: cutieMusic.trackList[playlistView.currentIndex].artist
+                text: (playlistView.model && playlistView.model[playlistView.currentIndex]) 
+                      ? playlistView.model[playlistView.currentIndex].artist 
+                      : ""
                 font.pixelSize: 13
                 elide: Text.ElideRight
             }
@@ -108,7 +114,7 @@ CutieWindow {
                 anchors.rightMargin: 5
                 anchors.right: miniNext.left
                 icon.name: "media-playback-start-symbolic"
-                 icon.color: Atmosphere.textColor
+                icon.color: Atmosphere.textColor
                 color: "transparent"
                 z: 200
 
@@ -116,8 +122,8 @@ CutieWindow {
                     if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
                         mediaPlayer.pause();
                     } else {
-                        if (mediaPlayer.playbackState === MediaPlayer.StoppedState) {
-                            mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                        if (mediaPlayer.playbackState === MediaPlayer.StoppedState && playlistView.model[playlistView.currentIndex]) {
+                            mediaPlayer.source = playlistView.model[playlistView.currentIndex].path;
                         } else mediaPlayer.play();
                     }
                 }
@@ -136,10 +142,11 @@ CutieWindow {
                 z: 200
 
                 onClicked: {
-                    if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
+                    if (playlistView.count === 0) return;
+                    if (playlistView.currentIndex + 1 < playlistView.count)
                         playlistView.currentIndex++;
                     else playlistView.currentIndex = 0;
-                    mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                    mediaPlayer.source = playlistView.model[playlistView.currentIndex].path;
                 }
             }
         }
@@ -151,10 +158,11 @@ CutieWindow {
 
             onMediaStatusChanged: {
                 if (mediaStatus == MediaPlayer.EndOfMedia) {
-                    if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
+                    if (playlistView.count === 0) return;
+                    if (playlistView.currentIndex + 1 < playlistView.count)
                         playlistView.currentIndex++;
                     else playlistView.currentIndex = 0;
-                    mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                    mediaPlayer.source = playlistView.model[playlistView.currentIndex].path;
                 } else if (mediaStatus == MediaPlayer.LoadedMedia) play();
             }
 
@@ -181,13 +189,33 @@ CutieWindow {
                 id: playlistView
                 anchors.fill: parent
                 anchors.bottomMargin: -miniControls.height
-                model: cutieMusic.trackList
+                model: cutieMusic.trackList.filter(function(item) {
+                    if (!view.searchQuery) return true;
+                    var q = view.searchQuery.toLowerCase();
+                    return item.title.toLowerCase().includes(q) || 
+                           item.artist.toLowerCase().includes(q);
+                })
                 delegate: playlistDelegate
                 clip: true
 
-                header: CutiePageHeader {
-                    id: titleM
-                    title: qsTr("Music")
+                header: Column {
+                    width: playlistView.width
+                    spacing: 10
+
+                    CutiePageHeader {
+                        id: titleM
+                        title: qsTr("Music")
+                        width: parent.width
+                    }
+
+                    CutieTextField {
+                        placeholderText: qsTr("Search...")
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.leftMargin: 15
+                        anchors.rightMargin: 15
+                        onTextChanged: view.searchQuery = text
+                    }
                 }
 
                 footer: Item {
