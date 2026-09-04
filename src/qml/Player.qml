@@ -126,11 +126,13 @@ CutiePage {
 
         CutieButton {
             id: implay
-            width: 88
-            height: 88
+            width: 66
+            height: 66
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             icon: miniPlay.icon
+            icon.width: 48
+            icon.height: 48
 
             background: Rectangle {
                 color: "transparent"
