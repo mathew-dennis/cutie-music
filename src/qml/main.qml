@@ -218,10 +218,8 @@ CutieWindow {
                         CutieTextField {
                             id: searchField
                             placeholderText: qsTr("Search...")
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.leftMargin: 15
-                            anchors.rightMargin: 15
+                            width: parent.width - 30
+                            anchors.horizontalCenter: parent.horizontalCenter
 
                             onAccepted: view.searchQuery = text
                         }
