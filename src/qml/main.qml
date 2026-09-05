@@ -86,7 +86,7 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: view.filteredTrack[playlistView.currentIndex].artist
+                text: view.filteredTrackList[playlistView.currentIndex].artist
                 font.pixelSize: 13
                 elide: Text.ElideRight
             }
