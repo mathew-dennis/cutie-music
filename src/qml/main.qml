@@ -7,6 +7,7 @@ import QtQuick.Dialogs
 import QtQuick.Window
 
 // Authors: Alexey T. (vin4ter), Erik Inkinen
+// Contributors: Mathew Dennis
 CutieWindow {
     id: view
     property bool playedStatus: false
@@ -14,6 +15,13 @@ CutieWindow {
     property bool btnPlayslate: false
     property int toMove: 0
     property int colPlaylist: 0
+    property string searchQuery: ""
+    property var filteredTrackList: cutieMusic.trackList.filter(function(item) {
+        if (!view.searchQuery) return true;
+        var q = view.searchQuery.toLowerCase();
+        return item.title.toLowerCase().includes(q) ||
+               item.artist.toLowerCase().includes(q);
+    })
 
     width: 400
     height: 800
@@ -28,10 +36,12 @@ CutieWindow {
             id: miniControls
 
             height: 70
+            radius: 20
             color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.margins: 10
             clip: true
 
             FastBlur {
@@ -51,8 +61,8 @@ CutieWindow {
                 height: 50
                 anchors.leftMargin: 10
                 anchors.left: parent.left
-                fillMode: Image.PreserveAspectFit
-                source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+                fillMode: Image.PreserveAspectCrop
+                source: view.filteredTrackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
             }
 
             CutieLabel {
@@ -76,7 +86,7 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: view.filteredTrack[playlistView.currentIndex].artist
+                text: view.filteredTracks[playlistView.currentIndex].artist
                 font.pixelSize: 13
                 elide: Text.ElideRight
             }
