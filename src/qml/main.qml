@@ -60,7 +60,7 @@ CutieWindow {
                 height: 50
                 anchors.leftMargin: 10
                 anchors.left: parent.left
-                fillMode: Image.PreserveAspectFit
+                fillMode: Image.PreserveAspectCrop
                 source: view.filteredTrackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
             }
 
