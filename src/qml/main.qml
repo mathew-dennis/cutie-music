@@ -188,6 +188,14 @@ CutieWindow {
                 header: CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
+                    CutieTextField {
+                            id: searchField
+                            placeholderText: qsTr("Search...")
+                            width: parent.width - 30
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                            onAccepted: view.searchQuery = text
+                        }
                 }
 
                 footer: Item {
