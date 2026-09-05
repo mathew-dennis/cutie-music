@@ -16,12 +16,6 @@ CutieWindow {
     property int toMove: 0
     property int colPlaylist: 0
     property string searchQuery: ""
-    property var filteredTracks: cutieMusic.trackList.filter(function(item) {
-        if (!view.searchQuery) return true;
-        var q = view.searchQuery.toLowerCase();
-        return item.title.toLowerCase().includes(q) ||
-               item.artist.toLowerCase().includes(q);
-    })
 
     width: 400
     height: 800
@@ -62,7 +56,7 @@ CutieWindow {
                 anchors.leftMargin: 10
                 anchors.left: parent.left
                 fillMode: Image.PreserveAspectCrop
-                source: view.filteredTracks[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+                source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
             }
 
             CutieLabel {
@@ -72,11 +66,12 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: view.filteredTracks[playlistView.currentIndex].title
+                text: cutieMusic.trackList[playlistView.currentIndex].title
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 elide: Text.ElideRight
             }
+
 
             CutieLabel {
                 anchors.bottom: parent.bottom
@@ -85,7 +80,7 @@ CutieWindow {
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: view.filteredTracks[playlistView.currentIndex].artist
+                text: cutieMusic.trackList[playlistView.currentIndex].artist
                 font.pixelSize: 13
                 elide: Text.ElideRight
             }
@@ -103,6 +98,7 @@ CutieWindow {
                         view.pageStack.push("qrc:/Player.qml", {});
                     }
                 }
+
             }
 
             CutieButton {
@@ -113,7 +109,7 @@ CutieWindow {
                 anchors.rightMargin: 5
                 anchors.right: miniNext.left
                 icon.name: "media-playback-start-symbolic"
-                icon.color: Atmosphere.textColor
+                 icon.color: Atmosphere.textColor
                 color: "transparent"
                 z: 200
 
@@ -122,7 +118,7 @@ CutieWindow {
                         mediaPlayer.pause();
                     } else {
                         if (mediaPlayer.playbackState === MediaPlayer.StoppedState) {
-                            mediaPlayer.source = view.filteredTracks[playlistView.currentIndex].path;
+                            mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
                         } else mediaPlayer.play();
                     }
                 }
@@ -141,10 +137,10 @@ CutieWindow {
                 z: 200
 
                 onClicked: {
-                    if (playlistView.currentIndex + 1 < view.filteredTracks.length)
+                    if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
                         playlistView.currentIndex++;
                     else playlistView.currentIndex = 0;
-                    mediaPlayer.source = view.filteredTracks[playlistView.currentIndex].path;
+                    mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
                 }
             }
         }
@@ -156,10 +152,10 @@ CutieWindow {
 
             onMediaStatusChanged: {
                 if (mediaStatus == MediaPlayer.EndOfMedia) {
-                    if (playlistView.currentIndex + 1 < view.filteredTracks.length)
+                    if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
                         playlistView.currentIndex++;
                     else playlistView.currentIndex = 0;
-                    mediaPlayer.source = view.filteredTracks[playlistView.currentIndex].path;
+                    mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
                 } else if (mediaStatus == MediaPlayer.LoadedMedia) play();
             }
 
@@ -182,12 +178,11 @@ CutieWindow {
             anchors.bottom: miniControls.top
             anchors.top: parent.top
             clip: true
-
-           CutieListView {
+            CutieListView {
                 id: playlistView
                 anchors.fill: parent
                 anchors.bottomMargin: -miniControls.height
-                model: view.filteredTracks
+                model: cutieMusic.trackList
                 delegate: playlistDelegate
                 clip: true
 
@@ -196,8 +191,8 @@ CutieWindow {
                     width: playlistView.width
 
                     CutiePageHeader {
-                        id: titleM
-                        title: qsTr("Music")
+                    id: titleM
+                    title: qsTr("Music")
                         width: parent.width // Fixes the invisible text
                     }
                     
@@ -216,7 +211,7 @@ CutieWindow {
                         }
                     }
                 }
-                
+
                 footer: Item {
                     height: miniControls.height
                 }
