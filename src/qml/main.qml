@@ -185,7 +185,7 @@ CutieWindow {
                 delegate: playlistDelegate
                 clip: true
 
-                header: Column {
+                header: Row {
                     width: playlistView.width
 
                     CutiePageHeader {
