@@ -188,7 +188,9 @@ CutieWindow {
                 header: CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
-                    CutieTextField {
+                }
+
+                CutieTextField {
                             id: searchField
                             placeholderText: qsTr("Search...")
                             width: parent.width - 30
@@ -196,8 +198,7 @@ CutieWindow {
 
                             onAccepted: view.searchQuery = text
                         }
-                }
-
+                        
                 footer: Item {
                     height: miniControls.height
                 }
