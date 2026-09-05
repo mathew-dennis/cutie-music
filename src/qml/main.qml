@@ -186,8 +186,8 @@ CutieWindow {
                 clip: true
 
                 header: Column {
-                    width: miniControls.height
-                    height: miniControls.height*4
+                    width: playlistView.width
+                    height: mediaPlayer.height*10
                     CutiePageHeader {
                         id: titleM
                         title: qsTr("Music")
