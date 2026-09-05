@@ -15,7 +15,6 @@ CutieWindow {
     property bool btnPlayslate: false
     property int toMove: 0
     property int colPlaylist: 0
-    property string searchQuery: ""
 
     width: 400
     height: 800
@@ -193,7 +192,6 @@ CutieWindow {
                     CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
-                        width: parent.width // Fixes the invisible text
                     }
                     
                     // Item wrapper prevents anchor conflicts inside the Column
