@@ -185,9 +185,9 @@ CutieWindow {
                 delegate: playlistDelegate
                 clip: true
 
-                header: Row {
+                header: Column {
                     width: playlistView.width
-
+                    height: 100 
                     CutiePageHeader {
                         id: titleM
                         title: qsTr("Music")
