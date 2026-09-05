@@ -185,12 +185,17 @@ CutieWindow {
                 delegate: playlistDelegate
                 clip: true
 
-                header: CutiePageHeader {
-                    id: titleM
-                    title: qsTr("Music")
-                }
+                header: Column {
+                    width: playlistView.width
 
-                CutieTextField {
+                    CutiePageHeader {
+                        id: titleM
+                        title: qsTr("Music")
+                        width: parent.width // Fixes the invisible text
+                    }
+                    
+
+                        CutieTextField {
                             id: searchField
                             placeholderText: qsTr("Search...")
                             width: parent.width - 30
@@ -198,7 +203,8 @@ CutieWindow {
 
                             onAccepted: view.searchQuery = text
                         }
-                        
+                    
+                }
                 footer: Item {
                     height: miniControls.height
                 }
