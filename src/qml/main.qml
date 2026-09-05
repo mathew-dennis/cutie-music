@@ -78,6 +78,7 @@ CutieWindow {
                 elide: Text.ElideRight
             }
 
+
             CutieLabel {
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 14
@@ -103,6 +104,7 @@ CutieWindow {
                         view.pageStack.push("qrc:/Player.qml", {});
                     }
                 }
+
             }
 
             CutieButton {
@@ -113,7 +115,7 @@ CutieWindow {
                 anchors.rightMargin: 5
                 anchors.right: miniNext.left
                 icon.name: "media-playback-start-symbolic"
-                icon.color: Atmosphere.textColor
+                 icon.color: Atmosphere.textColor
                 color: "transparent"
                 z: 200
 
@@ -182,8 +184,7 @@ CutieWindow {
             anchors.bottom: miniControls.top
             anchors.top: parent.top
             clip: true
-
-           CutieListView {
+            CutieListView {
                 id: playlistView
                 anchors.fill: parent
                 anchors.bottomMargin: -miniControls.height
@@ -196,8 +197,8 @@ CutieWindow {
                     width: playlistView.width
                     height: 100
                     CutiePageHeader {
-                        id: titleM
-                        title: qsTr("Music")
+                    id: titleM
+                    title: qsTr("Music")
                         width: parent.width // Fixes the invisible text
                     }
                     
@@ -209,8 +210,8 @@ CutieWindow {
                         anchors.horizontalCenter: parent.horizontalCenter
 
                             onAccepted: view.searchQuery = text
-                        }
-                    
+                }
+
                 }
                 footer: Item {
                     height: miniControls.height
