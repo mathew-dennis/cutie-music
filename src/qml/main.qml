@@ -37,7 +37,7 @@ CutieWindow {
 
             height: 70
             radius: 20
-            color: Atmosphere.primaryAlphaColor
+	        color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
@@ -51,7 +51,6 @@ CutieWindow {
                 height: view.height
                 source: playlistView
                 radius: 70
-                clip: true 
             }
 
             Image {
@@ -61,7 +60,7 @@ CutieWindow {
                 height: 50
                 anchors.leftMargin: 10
                 anchors.left: parent.left
-                fillMode: Image.PreserveAspectCrop
+                fillMode: Image.PreserveAspectFit
                 source: view.filteredTrackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
             }
 
@@ -115,7 +114,7 @@ CutieWindow {
                 anchors.rightMargin: 5
                 anchors.right: miniNext.left
                 icon.name: "media-playback-start-symbolic"
-                 icon.color: Atmosphere.textColor
+                icon.color: Atmosphere.textColor
                 color: "transparent"
                 z: 200
 
@@ -232,7 +231,6 @@ CutieWindow {
                 wrapMode: Text.NoWrap
                 elide: Text.ElideRight
                 maximumLineCount: 1
-
                 text: modelData.title
                 subText: modelData.artist
                 onClicked: {
