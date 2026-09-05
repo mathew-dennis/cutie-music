@@ -185,29 +185,9 @@ CutieWindow {
                 delegate: playlistDelegate
                 clip: true
 
-
-                header: Column {
-                    width: playlistView.width
-
-                    CutiePageHeader {
+                header: CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
-                    }
-                    
-                    // Item wrapper prevents anchor conflicts inside the Column
-                    Item {
-                        width: parent.width
-                        height: searchField.height
-                        
-                        CutieTextField {
-                            id: searchField
-                            placeholderText: qsTr("Search...")
-                            width: parent.width - 30
-                        anchors.horizontalCenter: parent.horizontalCenter
-
-                            onAccepted: view.searchQuery = text
-                        }
-                    }
                 }
 
                 footer: Item {
