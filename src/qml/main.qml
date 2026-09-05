@@ -66,8 +66,8 @@ CutieWindow {
 
             CutieLabel {
                 anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.leftMargin: 10
+                anchors.topMargin: 14
+                anchors.leftMargin: 15
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
@@ -80,8 +80,8 @@ CutieWindow {
 
             CutieLabel {
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 10
-                anchors.leftMargin: 10
+                anchors.bottomMargin: 14
+                anchors.leftMargin: 15
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
@@ -109,9 +109,9 @@ CutieWindow {
             CutieButton {
                 id: miniPlay
                 y: 10
-                width: 55
+                width: 45
                 height: 50
-                anchors.rightMargin: 10
+                anchors.rightMargin: 5
                 anchors.right: miniNext.left
                 icon.name: "media-playback-start-symbolic"
                 icon.color: Atmosphere.textColor
@@ -132,9 +132,9 @@ CutieWindow {
             CutieButton {
                 id: miniNext
                 y: 10
-                width: 55
+                width: 45
                 height: 50
-                anchors.rightMargin: 10
+                anchors.rightMargin: 5
                 anchors.right: parent.right
                 icon.name: "media-skip-forward-symbolic"
                 icon.color: Atmosphere.textColor
