@@ -15,6 +15,13 @@ CutieWindow {
     property bool btnPlayslate: false
     property int toMove: 0
     property int colPlaylist: 0
+    property string searchQuery: ""
+    property var filteredTrackList: cutieMusic.trackList.filter(function(item) {
+        if (!view.searchQuery) return true;
+        var q = view.searchQuery.toLowerCase();
+        return item.title.toLowerCase().includes(q) ||
+               item.artist.toLowerCase().includes(q);
+    })
 
     width: 400
     height: 800
@@ -29,10 +36,12 @@ CutieWindow {
             id: miniControls
 
             height: 70
+            radius: 20
 	        color: Atmosphere.primaryAlphaColor
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            anchors.margins: 10
             clip: true
 
             FastBlur {
@@ -51,31 +60,32 @@ CutieWindow {
                 height: 50
                 anchors.leftMargin: 10
                 anchors.left: parent.left
-                fillMode: Image.PreserveAspectFit
-                source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+                fillMode: Image.PreserveAspectCrop
+                source: view.filteredTrackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
             }
 
             CutieLabel {
                 anchors.top: parent.top
-                anchors.topMargin: 10
-                anchors.leftMargin: 10
+                anchors.topMargin: 14
+                anchors.leftMargin: 15
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: cutieMusic.trackList[playlistView.currentIndex].title
-                font.pixelSize: 20
+                text: view.filteredTrackList[playlistView.currentIndex].title
+                font.pixelSize: 16
+                font.weight: Font.Bold
                 elide: Text.ElideRight
             }
 
 
             CutieLabel {
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 10
-                anchors.leftMargin: 10
+                anchors.bottomMargin: 14
+                anchors.leftMargin: 15
                 anchors.left: miniCover.right
                 anchors.rightMargin: 10
                 anchors.right: miniPlay.left
-                text: cutieMusic.trackList[playlistView.currentIndex].artist
+                text: view.filteredTrackList[playlistView.currentIndex].artist
                 font.pixelSize: 13
                 elide: Text.ElideRight
             }
@@ -99,12 +109,13 @@ CutieWindow {
             CutieButton {
                 id: miniPlay
                 y: 10
-                width: 55
+                width: 45
                 height: 50
-                anchors.rightMargin: 10
-                anchors.right: parent.right
+                anchors.rightMargin: 5
+                anchors.right: miniNext.left
                 icon.name: "media-playback-start-symbolic"
                 icon.color: Atmosphere.textColor
+                color: "transparent"
                 z: 200
 
                 onClicked: {
@@ -112,9 +123,29 @@ CutieWindow {
                         mediaPlayer.pause();
                     } else {
                         if (mediaPlayer.playbackState === MediaPlayer.StoppedState) {
-                            mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                            mediaPlayer.source = view.filteredTrackList[playlistView.currentIndex].path;
                         } else mediaPlayer.play();
                     }
+                }
+            }
+            
+            CutieButton {
+                id: miniNext
+                y: 10
+                width: 45
+                height: 50
+                anchors.rightMargin: 5
+                anchors.right: parent.right
+                icon.name: "media-skip-forward-symbolic"
+                icon.color: Atmosphere.textColor
+                color: "transparent"
+                z: 200
+
+                onClicked: {
+                    if (playlistView.currentIndex + 1 < view.filteredTrackList.length)
+                        playlistView.currentIndex++;
+                    else playlistView.currentIndex = 0;
+                    mediaPlayer.source = view.filteredTrackList[playlistView.currentIndex].path;
                 }
             }
         }
@@ -126,10 +157,10 @@ CutieWindow {
 
             onMediaStatusChanged: {
                 if (mediaStatus == MediaPlayer.EndOfMedia) {
-                    if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
+                    if (playlistView.currentIndex + 1 < view.filteredTrackList.length)
                         playlistView.currentIndex++;
                     else playlistView.currentIndex = 0;
-                    mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                    mediaPlayer.source = view.filteredTrackList[playlistView.currentIndex].path;
                 } else if (mediaStatus == MediaPlayer.LoadedMedia) play();
             }
 
@@ -156,15 +187,42 @@ CutieWindow {
                 id: playlistView
                 anchors.fill: parent
                 anchors.bottomMargin: -miniControls.height
-                model: cutieMusic.trackList
+                model: view.filteredTrackList
                 delegate: playlistDelegate
                 clip: true
 
-                header: CutiePageHeader {
+
+                header: Column {
+                    width: playlistView.width
+                    height: 120
+                    spacing: 10
+
+                    CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
-                }
+                        width: parent.width // Fixes the invisible text
+                    }
+                      
+                    CutieTextField {
+                            id: searchField
+                            placeholderText: qsTr("Search songs...")
+                            width: parent.width - 30
+                            anchors.horizontalCenter: parent.horizontalCenter
 
+                            height: 38
+                            leftPadding: 16
+                            rightPadding: 16
+                            verticalAlignment: Text.AlignVCenter
+
+                            background: Rectangle {
+                                radius: searchField.height / 2
+                                color: Atmosphere.primaryAlphaColor
+                            }
+
+                            onAccepted: view.searchQuery = text
+                    }
+
+                }
                 footer: Item {
                     height: miniControls.height
                 }
