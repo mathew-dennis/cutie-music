@@ -196,14 +196,14 @@ CutieWindow {
                     width: playlistView.width
                     height: 120
                     spacing: 10
+
                     CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
                         width: parent.width // Fixes the invisible text
                     }
-                    
-                        
-                        CutieTextField {
+                      
+                    CutieTextField {
                             id: searchField
                             placeholderText: qsTr("Search songs...")
                             width: parent.width - 30
@@ -219,23 +219,8 @@ CutieWindow {
                                 color: Atmosphere.primaryAlphaColor
                             }
 
-                            CutieButton {
-                                anchors.left: parent.left
-                                anchors.leftMargin: 8
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 28
-                                height: 28
-                                z: 1
-                                color: "transparent"
-                                icon.name: "edit-find-symbolic"
-                                icon.color: Atmosphere.textColor
-                                opacity: 0.6
-
-                                onClicked: searchField.forceActiveFocus()
-                            }
-
                             onAccepted: view.searchQuery = text
-                }
+                    }
 
                 }
                 footer: Item {
