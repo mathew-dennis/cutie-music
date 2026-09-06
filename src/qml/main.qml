@@ -194,7 +194,7 @@ CutieWindow {
 
                 header: Column {
                     width: playlistView.width
-                    height: 100
+                    height: 120
                     CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
@@ -205,10 +205,11 @@ CutieWindow {
                         CutieTextField {
                             id: searchField
                             placeholderText: qsTr("Search songs...")
+                            textColor: Atmosphere.textColor
                             width: parent.width - 30
-                        anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
 
-                            height: 48
+                            height: 28
                             leftPadding: 44
                             rightPadding: 16
                             verticalAlignment: Text.AlignVCenter
