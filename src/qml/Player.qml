@@ -117,9 +117,9 @@ CutiePage {
             color: "transparent"
 
             onClicked: {
-                if (view.currentIndex > 0)
-                    view.currentIndex--;
-                else view.currentIndex = view.filteredTrackList.length - 1;
+                if (playlistView.currentIndex > 0)
+                    playlistView.currentIndex--;
+                else playlistView.currentIndex = view.filteredTrackList.length - 1;
                 mediaPlayer.source = view.filteredTrackList[view.currentIndex].path;
             }
         }
@@ -164,10 +164,10 @@ CutiePage {
             color: "transparent"
 
             onClicked: {
-                    if (view.playlistView.currentIndex + 1 < view.filteredTrackList.length)
-                        view.playlistView.currentIndex++;
-                    else view.playlistView.currentIndex = 0;
-                    view.mediaPlayer.source = view.filteredTrackList[playlistView.currentIndex].path;
+                if (playlistView.currentIndex + 1 < view.filteredTrackList.length)
+                    playlistView.currentIndex++;
+                else playlistView.currentIndex = 0;
+                mediaPlayer.source = view.filteredTrackList[playlistView.currentIndex].path;
             }
         }
     }
