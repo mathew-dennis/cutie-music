@@ -195,6 +195,7 @@ CutieWindow {
                 header: Column {
                     width: playlistView.width
                     height: 120
+                    spacing: 10
                     CutiePageHeader {
                     id: titleM
                     title: qsTr("Music")
