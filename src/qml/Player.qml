@@ -24,7 +24,7 @@ CutiePage {
         width: 234
         height: 236
         anchors.top: parent.top
-        source: cutieMusic.trackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
+        source: view.filteredTrackList[playlistView.currentIndex].path.toString().replace("file:///", "image://cover/")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 58
         sourceSize.height: 800
@@ -36,7 +36,7 @@ CutiePage {
         id: text1
 
         width: parent.width - 50
-        text: cutieMusic.trackList[playlistView.currentIndex].title
+        text: view.filteredTrackList[playlistView.currentIndex].title
         anchors.top: image.bottom
         anchors.topMargin: 20
         font.pixelSize: 28
@@ -51,7 +51,7 @@ CutiePage {
         id: text2
 
         width: parent.width - 50
-        text: cutieMusic.trackList[playlistView.currentIndex].artist
+        text: view.filteredTrackList[playlistView.currentIndex].artist
         anchors.top: text1.bottom
         anchors.topMargin: 20
         font.pixelSize: 20
@@ -117,10 +117,10 @@ CutiePage {
             color: "transparent"
 
             onClicked: {
-                if (playlistView.currentIndex > 0)
-                    playlistView.currentIndex--;
-                else playlistView.currentIndex = cutieMusic.trackList.length - 1;
-                mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                if (view.currentIndex > 0)
+                    view.currentIndex--;
+                else view.currentIndex = view.filteredTrackList.length - 1;
+                mediaPlayer.source = view.filteredTrackList[view.currentIndex].path;
             }
         }
 
@@ -146,7 +146,7 @@ CutiePage {
                     mediaPlayer.pause();
                 } else {
                     if (mediaPlayer.playbackState === MediaPlayer.StoppedState) {
-                        mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                        mediaPlayer.source = view.filteredTrackList[view.currentIndex].path;
                     } else mediaPlayer.play();
                 }
             }
@@ -164,10 +164,10 @@ CutiePage {
             color: "transparent"
 
             onClicked: {
-                if (playlistView.currentIndex + 1 < cutieMusic.trackList.length)
-                    playlistView.currentIndex++;
-                else playlistView.currentIndex = 0;
-                mediaPlayer.source = cutieMusic.trackList[playlistView.currentIndex].path;
+                if (view.currentIndex + 1 < view.filteredTrackList.length)
+                    view.currentIndex++;
+                else view.currentIndex = 0;
+                mediaPlayer.source = view.filteredTrackList[view.currentIndex].path;
             }
         }
     }
