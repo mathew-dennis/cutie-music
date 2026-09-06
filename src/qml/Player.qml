@@ -164,10 +164,10 @@ CutiePage {
             color: "transparent"
 
             onClicked: {
-                if (view.currentIndex + 1 < view.filteredTrackList.length)
-                    view.currentIndex++;
-                else view.currentIndex = 0;
-                mediaPlayer.source = view.filteredTrackList[view.currentIndex].path;
+                    if (view.playlistView.currentIndex + 1 < view.filteredTrackList.length)
+                        view.playlistView.currentIndex++;
+                    else view.playlistView.currentIndex = 0;
+                    view.mediaPlayer.source = view.filteredTrackList[playlistView.currentIndex].path;
             }
         }
     }
