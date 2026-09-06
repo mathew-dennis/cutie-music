@@ -28,35 +28,6 @@ CutieWindow {
     visible: true
     title: qsTr("Music")
 
-    component SearchField: CutieTextField {
-        id: root
-
-        height: 48
-        leftPadding: 44
-        rightPadding: 16
-        verticalAlignment: Text.AlignVCenter
-
-        background: Rectangle {
-            radius: root.height / 2
-            color: Atmosphere.primaryAlphaColor
-        }
-
-        CutieButton {
-            anchors.left: parent.left
-            anchors.leftMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            width: 28
-            height: 28
-            z: 1
-            color: "transparent"
-            icon.name: "edit-find-symbolic"
-            icon.color: Atmosphere.textColor
-            opacity: 0.6
-
-            onClicked: root.forceActiveFocus()
-        }
-    }
-
     initialPage: CutiePage {
         width: view.width
         height: view.height
@@ -231,11 +202,36 @@ CutieWindow {
                     }
                     
                         
-                        SearchField {
+                        CutieTextField {
                             id: searchField
                             placeholderText: qsTr("Search songs...")
                             width: parent.width - 30
                         anchors.horizontalCenter: parent.horizontalCenter
+
+                            height: 48
+                            leftPadding: 44
+                            rightPadding: 16
+                            verticalAlignment: Text.AlignVCenter
+
+                            background: Rectangle {
+                                radius: searchField.height / 2
+                                color: Atmosphere.primaryAlphaColor
+                            }
+
+                            CutieButton {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 8
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 28
+                                height: 28
+                                z: 1
+                                color: "transparent"
+                                icon.name: "edit-find-symbolic"
+                                icon.color: Atmosphere.textColor
+                                opacity: 0.6
+
+                                onClicked: searchField.forceActiveFocus()
+                            }
 
                             onAccepted: view.searchQuery = text
                 }
