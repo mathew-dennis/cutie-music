@@ -205,7 +205,6 @@ CutieWindow {
                         CutieTextField {
                             id: searchField
                             placeholderText: qsTr("Search songs...")
-                            textColor: Atmosphere.textColor
                             width: parent.width - 30
                             anchors.horizontalCenter: parent.horizontalCenter
 
