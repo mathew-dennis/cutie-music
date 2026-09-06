@@ -205,7 +205,7 @@ CutieWindow {
                       
                     CutieTextField {
                             id: searchField
-                            placeholderText: qsTr("🔍 Search songs...")
+                            placeholderText: qsTr("Search songs...")
                             width: parent.width - 30
                             anchors.horizontalCenter: parent.horizontalCenter
 
