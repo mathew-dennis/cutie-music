@@ -12,8 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-	AppCore appCore;
 	QGuiApplication app(argc, argv);
+	AppCore appCore;
 	QString locale = QLocale::system().name();
 	QTranslator translator;
 	translator.load(QString(":/i18n/cutie-music_") + locale);
@@ -23,6 +23,7 @@ int main(int argc, char *argv[])
 	engine.addImageProvider(QLatin1String("cover"), &coverProvider);
 	QQmlContext *context = engine.rootContext();
 	context->setContextProperty("cutieMusic", &appCore);
+	context->setContextProperty("audioFileArgument", app.arguments().value(1));
 	const QUrl url(QStringLiteral("qrc:/main.qml"));
 	QObject::connect(
 		&engine, &QQmlApplicationEngine::objectCreated, &app,

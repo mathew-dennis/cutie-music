@@ -28,6 +28,11 @@ CutieWindow {
     visible: true
     title: qsTr("Music")
 
+    Component.onCompleted: {
+        if (audioFileArgument)
+            mediaPlayer.source = audioFileArgument;
+    }
+
     initialPage: CutiePage {
         width: view.width
         height: view.height

@@ -4,10 +4,11 @@
 Version=1.2
 Type=Application
 Name=Music
-Exec=/usr/bin/cutie-music
+Exec=/usr/bin/cutie-music %f
 TryExec=/usr/bin/cutie-music
 Icon=cutie-music
 Terminal=false
 StartupNotify=false
 Comment=Player for music
 Categories=AudioVideo;Audio;Music
+MimeType=audio/mpeg;audio/flac;audio/mp4;audio/ogg;audio/wav;audio/opus;audio/aac;audio/x-ms-wma;
