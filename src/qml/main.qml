@@ -29,7 +29,7 @@ CutieWindow {
     title: qsTr("Music")
 
     Component.onCompleted: {
-         if (audioFileArgument&& typeof audioFileArgument === "string") {
+         if (audioFileArgument&& typeof audioFileArgument === "string" && audioFileArgument.trim().length >) {
             cutieMusic.addExternalTrack(audioFileArgument);
             mediaPlayer.source = cutieMusic.trackList[0].path;
         }
