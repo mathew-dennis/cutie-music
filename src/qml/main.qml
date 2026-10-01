@@ -29,9 +29,13 @@ CutieWindow {
     title: qsTr("Music")
 
     Component.onCompleted: {
-         if (audioFileArgument) {
-            cutieMusic.addExternalTrack(audioFileArgument);
-            mediaPlayer.source = cutieMusic.trackList[0].path;
+        if (audioFileArgument) {
+            var cleanPath = decodeURIComponent(audioFileArgument.toString().replace("file://", ""));
+            
+            if (fileExists(cleanPath)) {
+                cutieMusic.addExternalTrack(cleanPath);
+                mediaPlayer.source = cutieMusic.trackList[0].path;
+            }
         }
     }
 
