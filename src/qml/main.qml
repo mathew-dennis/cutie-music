@@ -27,37 +27,14 @@ CutieWindow {
     height: 800
     visible: true
     title: qsTr("Music")
-Component.onCompleted: {
-        if (audioFileArgument) {
-            console.log("Raw audioFileArgument:", audioFileArgument);
-            
-            // Clean up the path properly (handling triple slashes if present)
-            var cleanPath = audioFileArgument.toString();
-            if (cleanPath.startsWith("file://")) {
-                // If it starts with file://, let QUrl or string manipulation handle it cleanly
-                cleanPath = decodeURIComponent(cleanPath.replace(/^file:\/\//, ""));
-            }
-            // If it left a double slash like //home/..., fix it to /home/...
-            if (cleanPath.startsWith("//") && !cleanPath.startsWith("///")) {
-                cleanPath = cleanPath.substring(1);
-            }
 
-            console.log("Cleaned path for check:", cleanPath);
-            console.log("File exists result:", fileExists(cleanPath));
-
-            if (fileExists(cleanPath)) {
-                cutieMusic.addExternalTrack(cleanPath);
-                
-                // Print out the track list length and items to verify where it went
-                console.log("Track list length after adding:", cutieMusic.trackList.length);
-                
-                // If your track was added, find it or set source directly from cleanPath
-                mediaPlayer.source = cleanPath; // Try setting it directly first!
-            } else {
-                console.error("Failed to find file at path:", cleanPath);
-            }
+    Component.onCompleted: {
+         if (audioFileArgument&& typeof audioFileArgument === "string") {
+            cutieMusic.addExternalTrack(audioFileArgument);
+            mediaPlayer.source = cutieMusic.trackList[0].path;
         }
     }
+
     initialPage: CutiePage {
         width: view.width
         height: view.height
