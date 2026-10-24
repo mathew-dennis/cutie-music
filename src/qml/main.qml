@@ -250,8 +250,12 @@ CutieWindow {
                 running: view.showFrameStats && view.visible && playlistView.moving
 
                 onRunningChanged: {
-                    if (!running && elapsedTime > 0 && currentFrame > 0)
-                        frameStatsSampler.finishScroll(currentFrame, elapsedTime, smoothFrameTime)
+                    if (running) {
+                        reset()
+                        frameStatsSampler.beginScroll()
+                    } else if (elapsedTime > 0 && currentFrame > 0) {
+                        frameStatsSampler.finishScroll(currentFrame, elapsedTime)
+                    }
                 }
             }
 
@@ -283,25 +287,25 @@ CutieWindow {
                     }))
                 }
 
-                function finishScroll(frameCount, elapsedSeconds, smoothFrameTime) {
+                function beginScroll() {
+                    previousFrameCount = frameCounter.currentFrame
+                    previousElapsedTime = frameCounter.elapsedTime
+                    framesPerSecond = 0
+                    totalFrames = frameCounter.currentFrame
+                    averageFrameTimeMs = 0
+                    hasSample = false
+                }
+
+                function finishScroll(frameCount, elapsedSeconds) {
                     var fps = elapsedSeconds > 0 ? frameCount / elapsedSeconds : 0
+                    var frameTimeMs = frameCount > 0
+                        ? elapsedSeconds * 1000 / frameCount : 0
                     totalFrames = frameCount
                     framesPerSecond = fps
-                    averageFrameTimeMs = smoothFrameTime * 1000
+                    averageFrameTimeMs = frameTimeMs
                     hasSample = frameCount > 0
                     logStats("scroll_end", elapsedSeconds * 1000, fps,
                              averageFrameTimeMs, frameCount, frameCount)
-                }
-
-                onRunningChanged: {
-                    if (running) {
-                        previousFrameCount = frameCounter.currentFrame
-                        previousElapsedTime = frameCounter.elapsedTime
-                        framesPerSecond = 0
-                        totalFrames = frameCounter.currentFrame
-                        averageFrameTimeMs = 0
-                        hasSample = false
-                    }
                 }
 
                 onTriggered: {
@@ -316,7 +320,7 @@ CutieWindow {
                     previousFrameCount = currentFrameCount
                     previousElapsedTime = currentElapsedTime
                     totalFrames = currentFrameCount
-                    averageFrameTimeMs = frameCounter.smoothFrameTime * 1000
+                    averageFrameTimeMs = elapsedDelta * 1000 / frameDelta
                     hasSample = true
                     logStats("scroll_sample", elapsedDelta * 1000,
                              framesPerSecond, averageFrameTimeMs,
