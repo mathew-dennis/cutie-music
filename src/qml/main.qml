@@ -10,8 +10,6 @@ import QtQuick.Window
 // Contributors: Mathew Dennis
 CutieWindow {
     id: view
-    // Set false to hide the benchmark HUD and stop its frame sampler.
-    property bool showFrameStats: true
     property bool playedStatus: false
     property int value: 0
     property bool btnPlayslate: false
@@ -227,118 +225,6 @@ CutieWindow {
                 footer: Item {
                     height: miniControls.height
                 }
-            }
-        }
-
-        // Small, opt-in benchmark HUD. FrameAnimation follows Qt Quick's
-        // rendered animation-frame updates; the label itself refreshes once
-        // per second to keep the measurement overhead low.
-        Rectangle {
-            id: frameStatsOverlay
-            visible: view.showFrameStats
-            z: 10000
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.margins: 8
-            implicitWidth: frameStatsLabel.implicitWidth + 16
-            implicitHeight: frameStatsLabel.implicitHeight + 10
-            radius: 6
-            color: "#dd171717"
-
-            FrameAnimation {
-                id: frameCounter
-                running: view.showFrameStats && view.visible && playlistView.moving
-
-                onRunningChanged: {
-                    if (running) {
-                        reset()
-                        frameStatsSampler.beginScroll()
-                    } else if (elapsedTime > 0 && currentFrame > 0) {
-                        frameStatsSampler.finishScroll(currentFrame, elapsedTime)
-                    }
-                }
-            }
-
-            Timer {
-                id: frameStatsSampler
-                property int previousFrameCount: 0
-                property real previousElapsedTime: 0
-                property real framesPerSecond: 0
-                property int totalFrames: 0
-                property real averageFrameTimeMs: 0
-                property bool hasSample: false
-
-                interval: 1000
-                repeat: true
-                running: frameCounter.running
-
-                function logStats(eventName, durationMs, fps, frameTimeMs, frames, total) {
-                    console.info("CUTIE_FRAME_STATS " + JSON.stringify({
-                        event: eventName,
-                        timestamp_ms: Date.now(),
-                        duration_ms: Math.round(durationMs),
-                        fps: Math.round(fps * 10) / 10,
-                        frame_ms: Math.round(frameTimeMs * 10) / 10,
-                        frames: frames,
-                        total_frames: total,
-                        scroll_y: Math.round(playlistView.contentY),
-                        item_count: playlistView.count,
-                        current_index: playlistView.currentIndex
-                    }))
-                }
-
-                function beginScroll() {
-                    previousFrameCount = frameCounter.currentFrame
-                    previousElapsedTime = frameCounter.elapsedTime
-                    framesPerSecond = 0
-                    totalFrames = frameCounter.currentFrame
-                    averageFrameTimeMs = 0
-                    hasSample = false
-                }
-
-                function finishScroll(frameCount, elapsedSeconds) {
-                    var fps = elapsedSeconds > 0 ? frameCount / elapsedSeconds : 0
-                    var frameTimeMs = frameCount > 0
-                        ? elapsedSeconds * 1000 / frameCount : 0
-                    totalFrames = frameCount
-                    framesPerSecond = fps
-                    averageFrameTimeMs = frameTimeMs
-                    hasSample = frameCount > 0
-                    logStats("scroll_end", elapsedSeconds * 1000, fps,
-                             averageFrameTimeMs, frameCount, frameCount)
-                }
-
-                onTriggered: {
-                    var currentFrameCount = frameCounter.currentFrame
-                    var currentElapsedTime = frameCounter.elapsedTime
-                    var frameDelta = currentFrameCount - previousFrameCount
-                    var elapsedDelta = currentElapsedTime - previousElapsedTime
-                    if (frameDelta <= 0 || elapsedDelta <= 0)
-                        return
-
-                    framesPerSecond = frameDelta / elapsedDelta
-                    previousFrameCount = currentFrameCount
-                    previousElapsedTime = currentElapsedTime
-                    totalFrames = currentFrameCount
-                    averageFrameTimeMs = elapsedDelta * 1000 / frameDelta
-                    hasSample = true
-                    logStats("scroll_sample", elapsedDelta * 1000,
-                             framesPerSecond, averageFrameTimeMs,
-                             frameDelta, totalFrames)
-                }
-            }
-
-            Text {
-                id: frameStatsLabel
-                anchors.centerIn: parent
-                color: "white"
-                font.pixelSize: 12
-                text: frameStatsSampler.hasSample
-                    ? qsTr("%1 FPS  ·  %2 ms  ·  %3 frames")
-                        .arg(frameStatsSampler.framesPerSecond.toFixed(0))
-                        .arg(frameStatsSampler.averageFrameTimeMs.toFixed(1))
-                        .arg(frameStatsSampler.totalFrames)
-                    : qsTr("Scroll to measure")
             }
         }
 
