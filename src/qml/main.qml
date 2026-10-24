@@ -247,35 +247,80 @@ CutieWindow {
 
             FrameAnimation {
                 id: frameCounter
-                running: view.showFrameStats && view.visible
+                running: view.showFrameStats && view.visible && playlistView.moving
+
+                onRunningChanged: {
+                    if (!running && elapsedTime > 0 && currentFrame > 0)
+                        frameStatsSampler.finishScroll(currentFrame, elapsedTime, smoothFrameTime)
+                }
             }
 
             Timer {
                 id: frameStatsSampler
                 property int previousFrameCount: 0
-                property int framesPerSecond: 0
+                property real previousElapsedTime: 0
+                property real framesPerSecond: 0
                 property int totalFrames: 0
                 property real averageFrameTimeMs: 0
+                property bool hasSample: false
 
                 interval: 1000
                 repeat: true
                 running: frameCounter.running
 
+                function logStats(eventName, durationMs, fps, frameTimeMs, frames, total) {
+                    console.info("CUTIE_FRAME_STATS " + JSON.stringify({
+                        event: eventName,
+                        timestamp_ms: Date.now(),
+                        duration_ms: Math.round(durationMs),
+                        fps: Math.round(fps * 10) / 10,
+                        frame_ms: Math.round(frameTimeMs * 10) / 10,
+                        frames: frames,
+                        total_frames: total,
+                        scroll_y: Math.round(playlistView.contentY),
+                        item_count: playlistView.count,
+                        current_index: playlistView.currentIndex
+                    }))
+                }
+
+                function finishScroll(frameCount, elapsedSeconds, smoothFrameTime) {
+                    var fps = elapsedSeconds > 0 ? frameCount / elapsedSeconds : 0
+                    totalFrames = frameCount
+                    framesPerSecond = fps
+                    averageFrameTimeMs = smoothFrameTime * 1000
+                    hasSample = frameCount > 0
+                    logStats("scroll_end", elapsedSeconds * 1000, fps,
+                             averageFrameTimeMs, frameCount, frameCount)
+                }
+
                 onRunningChanged: {
                     if (running) {
                         previousFrameCount = frameCounter.currentFrame
+                        previousElapsedTime = frameCounter.elapsedTime
                         framesPerSecond = 0
                         totalFrames = frameCounter.currentFrame
                         averageFrameTimeMs = 0
+                        hasSample = false
                     }
                 }
 
                 onTriggered: {
                     var currentFrameCount = frameCounter.currentFrame
-                    framesPerSecond = currentFrameCount - previousFrameCount
+                    var currentElapsedTime = frameCounter.elapsedTime
+                    var frameDelta = currentFrameCount - previousFrameCount
+                    var elapsedDelta = currentElapsedTime - previousElapsedTime
+                    if (frameDelta <= 0 || elapsedDelta <= 0)
+                        return
+
+                    framesPerSecond = frameDelta / elapsedDelta
                     previousFrameCount = currentFrameCount
+                    previousElapsedTime = currentElapsedTime
                     totalFrames = currentFrameCount
                     averageFrameTimeMs = frameCounter.smoothFrameTime * 1000
+                    hasSample = true
+                    logStats("scroll_sample", elapsedDelta * 1000,
+                             framesPerSecond, averageFrameTimeMs,
+                             frameDelta, totalFrames)
                 }
             }
 
@@ -284,10 +329,12 @@ CutieWindow {
                 anchors.centerIn: parent
                 color: "white"
                 font.pixelSize: 12
-                text: qsTr("%1 FPS  ·  %2 ms  ·  %3 frames")
-                    .arg(frameStatsSampler.framesPerSecond)
-                    .arg(frameStatsSampler.averageFrameTimeMs.toFixed(1))
-                    .arg(frameStatsSampler.totalFrames)
+                text: frameStatsSampler.hasSample
+                    ? qsTr("%1 FPS  ·  %2 ms  ·  %3 frames")
+                        .arg(frameStatsSampler.framesPerSecond.toFixed(0))
+                        .arg(frameStatsSampler.averageFrameTimeMs.toFixed(1))
+                        .arg(frameStatsSampler.totalFrames)
+                    : qsTr("Scroll to measure")
             }
         }
 
