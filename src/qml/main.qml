@@ -57,8 +57,9 @@ CutieWindow {
                 anchors.bottom: parent.bottom
                 height: view.height
                 source: playlistView
-                blur: true
-                blurRadius: 40
+                blurEnabled: true
+                blur: 1.0
+                blurMax: 40
             }
 
             Image {
