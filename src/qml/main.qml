@@ -1,9 +1,9 @@
 import Cutie
-import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
+import QtQuick.Effects
 import QtQuick.Window
 
 // Authors: Alexey T. (vin4ter), Erik Inkinen
@@ -51,13 +51,14 @@ CutieWindow {
             anchors.margins: 10
             clip: true
 
-            FastBlur {
+            MultiEffect {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
                 height: view.height
                 source: playlistView
-                radius: 70
+                blur: true
+                blurRadius: 40
             }
 
             Image {
@@ -196,6 +197,7 @@ CutieWindow {
                 anchors.bottomMargin: -miniControls.height
                 model: view.filteredTrackList
                 delegate: playlistDelegate
+                cacheBuffer: 500
                 clip: true
 
 
