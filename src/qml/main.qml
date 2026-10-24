@@ -10,6 +10,8 @@ import QtQuick.Window
 // Contributors: Mathew Dennis
 CutieWindow {
     id: view
+    // Set false to hide the benchmark HUD and stop its frame sampler.
+    property bool showFrameStats: true
     property bool playedStatus: false
     property int value: 0
     property bool btnPlayslate: false
@@ -225,6 +227,67 @@ CutieWindow {
                 footer: Item {
                     height: miniControls.height
                 }
+            }
+        }
+
+        // Small, opt-in benchmark HUD. FrameAnimation follows Qt Quick's
+        // rendered animation-frame updates; the label itself refreshes once
+        // per second to keep the measurement overhead low.
+        Rectangle {
+            id: frameStatsOverlay
+            visible: view.showFrameStats
+            z: 10000
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.margins: 8
+            implicitWidth: frameStatsLabel.implicitWidth + 16
+            implicitHeight: frameStatsLabel.implicitHeight + 10
+            radius: 6
+            color: "#dd171717"
+
+            FrameAnimation {
+                id: frameCounter
+                running: view.showFrameStats && view.visible
+            }
+
+            Timer {
+                id: frameStatsSampler
+                property int previousFrameCount: 0
+                property int framesPerSecond: 0
+                property int totalFrames: 0
+                property real averageFrameTimeMs: 0
+
+                interval: 1000
+                repeat: true
+                running: frameCounter.running
+
+                onRunningChanged: {
+                    if (running) {
+                        previousFrameCount = frameCounter.currentFrame
+                        framesPerSecond = 0
+                        totalFrames = frameCounter.currentFrame
+                        averageFrameTimeMs = 0
+                    }
+                }
+
+                onTriggered: {
+                    var currentFrameCount = frameCounter.currentFrame
+                    framesPerSecond = currentFrameCount - previousFrameCount
+                    previousFrameCount = currentFrameCount
+                    totalFrames = currentFrameCount
+                    averageFrameTimeMs = frameCounter.smoothFrameTime * 1000
+                }
+            }
+
+            Text {
+                id: frameStatsLabel
+                anchors.centerIn: parent
+                color: "white"
+                font.pixelSize: 12
+                text: qsTr("%1 FPS  ·  %2 ms  ·  %3 frames")
+                    .arg(frameStatsSampler.framesPerSecond)
+                    .arg(frameStatsSampler.averageFrameTimeMs.toFixed(1))
+                    .arg(frameStatsSampler.totalFrames)
             }
         }
 
