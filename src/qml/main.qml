@@ -273,18 +273,14 @@ CutieWindow {
                 running: frameCounter.running
 
                 function logStats(eventName, durationMs, fps, frameTimeMs, frames, total) {
-                    console.info("CUTIE_FRAME_STATS " + JSON.stringify({
-                        event: eventName,
-                        timestamp_ms: Date.now(),
-                        duration_ms: Math.round(durationMs),
-                        fps: Math.round(fps * 10) / 10,
-                        frame_ms: Math.round(frameTimeMs * 10) / 10,
-                        frames: frames,
-                        total_frames: total,
-                        scroll_y: Math.round(playlistView.contentY),
-                        item_count: playlistView.count,
-                        current_index: playlistView.currentIndex
-                    }))
+                    console.info("CUTIE_PERF src=music ev=" + eventName
+                        + " ts_ms=" + Date.now()
+                        + " dur_ms=" + Math.round(durationMs)
+                        + " fps=" + (Math.round(fps * 10) / 10)
+                        + " frame_ms=" + (Math.round(frameTimeMs * 10) / 10)
+                        + " frames=" + frames
+                        + " total=" + total
+                        + " scroll_y=" + Math.round(playlistView.contentY))
                 }
 
                 function beginScroll() {
