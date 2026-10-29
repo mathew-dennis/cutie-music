@@ -259,6 +259,14 @@ CutieWindow {
                 }
             }
 
+            Connections {
+                target: view
+                enabled: frameCounter.running
+                function onFrameSwapped() {
+                    frameStatsSampler.swapCount++
+                }
+            }
+
             Timer {
                 id: frameStatsSampler
                 property int previousFrameCount: 0
@@ -267,6 +275,7 @@ CutieWindow {
                 property int totalFrames: 0
                 property real averageFrameTimeMs: 0
                 property bool hasSample: false
+                property int swapCount: 0
 
                 interval: 1000
                 repeat: true
@@ -280,7 +289,9 @@ CutieWindow {
                         + " frame_ms=" + (Math.round(frameTimeMs * 10) / 10)
                         + " frames=" + frames
                         + " total=" + total
-                        + " scroll_y=" + Math.round(playlistView.contentY))
+                        + " scroll_y=" + Math.round(playlistView.contentY)
+                        + " swaps=" + swapCount)
+                    swapCount = 0
                 }
 
                 function beginScroll() {
@@ -290,6 +301,7 @@ CutieWindow {
                     totalFrames = frameCounter.currentFrame
                     averageFrameTimeMs = 0
                     hasSample = false
+                    swapCount = 0
                 }
 
                 function finishScroll(frameCount, elapsedSeconds) {
